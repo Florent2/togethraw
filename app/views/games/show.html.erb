@@ -1,0 +1,61 @@
+<%= turbo_stream_from @game %>
+
+<div class="left">
+  <div class="board-container">
+    <div class="board">
+      <% Game::CELLS_NB.times do |i| %>
+        <%= form_with url: toggle_cell_game_path(@game), method: :put do %>
+          <%= hidden_field_tag :cell_index, i %>
+          <%= button_tag "",
+            disabled: !@game.can_toggle_cell?(i, @player),
+            class: "cell",
+            style: "cursor: #{@game.can_toggle_cell?(i, @player) ? 'pointer' : 'not-allowed'}; background-color: #{@game.cells[i].presence || 'white'};" %>
+        <% end %>
+      <% end %>
+    </div>
+    <% if @game.started? && @game.current_drawer == @player %>
+      <div class="color-line">
+        <% %w[red blue green yellow orange purple black white].each do |color| %>
+          <% extra_style = 'border-color: yellow; border-width: 5px;' if color == @game.color(@player) %>
+          <%= form_with url: update_player_color_game_path(@game), method: :put do %>
+            <%= hidden_field_tag :color, color %>
+            <%= button_tag "",
+              class: "color-cell",
+              style: "background-color: #{color}; #{extra_style} " %>
+            <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="right">
+  <p>(You are <%= @player %>)</p>
+
+  <% if @game.started? %>
+    <% if @game.current_drawer == @player %>
+      <h2 class="blink">It's your turn to toggle 3 cells!</h2>
+    <% else %>
+      <p>It's the turn of <b><%= @game.current_drawer %></b> to toggle cells.</p>
+    <% end %>
+
+    <% if @game.is_drawer?(@player) %>
+      <p>Word to draw with <%= (@game.drawers - [@player]).to_sentence %>: <b><%= @game.word %></b></p>
+      <p>Guessers: <%= @game.guessers.to_sentence %></p>
+    <% else %>
+      <p>You must guess the word being drawed by <%= @game.drawers.to_sentence %>.</p>
+      <p>The other guessers are: <%= (@game.guessers - [@player]).to_sentence %></p>
+    <% end %>
+
+
+    <% if @player == @game.creator %>
+      <%= link_to "Reset", start_game_path(@game), data: { 'turbo-method' => :put } %>
+    <% end %>
+  <% else %>
+    <p>The game has not started yet...</p>
+    <p>Players: <%= (@game.drawers + @game.guessers).to_sentence %></p>
+    <% if @player == @game.creator %>
+      <%= link_to "Start", start_game_path(@game), data: { 'turbo-method' => :put } %>
+    <% end %>
+  <% end %>
+</div>

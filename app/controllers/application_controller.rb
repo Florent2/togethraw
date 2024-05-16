@@ -1,0 +1,11 @@
+class ApplicationController < ActionController::Base
+  before_action :authenticate
+
+  private
+
+  def authenticate
+    authenticate_or_request_with_http_basic do |username, password|
+      @player = username
+    end
+  end
+end

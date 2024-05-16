@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Togethraw</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= turbo_refreshes_with method: :morph, scroll: :preserve  %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <style>
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+.left {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.right {
+  width: 50%;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f0f0f0;
+}
+.board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  gap: 2px;
+  width: 90%;
+  max-width: 500px;
+}
+.cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #000;
+  background-color: #f0f0f0;
+}
+.color-line {
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.color-cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #000;
+  margin-right: 5px;
+  border-color: black;
+}
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+    </style>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
